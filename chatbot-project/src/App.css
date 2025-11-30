@@ -1,0 +1,13 @@
+
+.app-container{
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  /* vh = viewport height(the height of the browser) -> 100vh = 100% of the neight of the browser */
+  height: 100vh; 
+
+  display: flex;
+  flex-direction: column;
+}
+
+

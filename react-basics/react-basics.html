@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+    <div class="js-container"></div>
+
+
+    <!-- This is code for react -->
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+
+    <!-- This how we convert JS to jsx. -->
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+
+    <script type="text/babel">
+
+        const button = <button>This HTML directly inside JS. It's called JSX.</button>;
+        const paragraph = <p>Paragraph of Text</p>;
+
+        // display multiple elemenets at once.
+        // best practises - cover <div> with paranathesis, seperate HTML and JS codes woth line spacing, use indentation.
+        const div = (
+            <div> 
+                <p>This is Div</p>
+                <button>Hello</button>
+                <p>Paragraph of Text { 2 + 2 } </p>
+            </div>
+        );
+    
+        const container = document.querySelector('.js-container');
+        //ReactDOM.createRoot(container) -> setup react with a container, react uses container to make it organize.
+        //render = display something
+        ReactDOM.createRoot(container).render(div);
+    </script>
+  </body>
+</html>

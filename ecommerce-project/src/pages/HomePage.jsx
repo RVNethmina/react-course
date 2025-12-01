@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { useEffect , useState } from 'react';
 import Header from "../components/Header";
-
+import formatMoney from '../utils/money';
 import "./HomePage.css";
+
+
 //in here we access the cart data that is sent from the App.jsx (function HomePage({cart})), This is use of props.
 function HomePage({cart}) {
   // fetch("http://localhost:3000/api/products").then((response) => {
@@ -51,7 +53,7 @@ function HomePage({cart}) {
                 </div>
 
                 <div className="product-price">
-                  ${(product.priceCents / 100).toFixed(2)}
+                  {formatMoney(product.priceCents)}
                 </div>
 
                 <div className="product-quantity-container">

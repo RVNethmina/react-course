@@ -3,26 +3,21 @@ import { useEffect , useState } from 'react';
 import Header from "../components/Header";
 
 import "./HomePage.css";
-
-function HomePage() {
+//in here we access the cart data that is sent from the App.jsx (function HomePage({cart})), This is use of props.
+function HomePage({cart}) {
   // fetch("http://localhost:3000/api/products").then((response) => {
   //   response.json().then((data) => {
   //     console.log(data);
   //   });
   // });
+
   const [products , setProducts] = useState([])
-  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     axios.get('/api/products')
       .then((response) => {
         setProducts(response.data);
     });
-
-    axios.get('/api/cart-items')
-      .then((response) => {
-        setCart(response.data);
-      })
   }, []);
 
   //when the dependancy array is empty the code will only run once.

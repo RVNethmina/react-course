@@ -3,10 +3,10 @@ import "./header.css";
 
 function Header({cart}) {
 
-  let totalQunatity = 0;
+  let totalQuantity = 0;
 
   cart.forEach((carItem) => {
-    totalQunatity += carItem.quantity;
+    totalQuantity += carItem.quantity;
   });
 
   return (
@@ -33,7 +33,7 @@ function Header({cart}) {
 
         <Link className="cart-link header-link" to="/checkout">
           <img className="cart-icon" src="images/icons/cart-icon.png" />
-          <div className="cart-quantity">{totalQunatity}</div>
+          <div className="cart-quantity">{totalQuantity}</div>
           <div className="cart-text">Cart</div>
         </Link>
       </div>

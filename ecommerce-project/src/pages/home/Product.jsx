@@ -22,7 +22,10 @@ function Product({ product, loadCart }) {
   return (
     <div className="product-container">
       <div className="product-image-container">
-        <img className="product-image" src={product.image} />
+        <img className="product-image" 
+        // This id lets us find the image element in our test.
+        data-testid="product-image"
+        src={product.image} />
       </div>
 
       <div className="product-name limit-text-to-2-lines">{product.name}</div>
@@ -30,6 +33,7 @@ function Product({ product, loadCart }) {
       <div className="product-rating-container">
         <img
           className="product-rating-stars"
+          data-testid="product-rating-stars-image"
           src={`images/ratings/rating-${product.rating.stars * 10}.png`}
         />
         <div className="product-rating-count link-primary">

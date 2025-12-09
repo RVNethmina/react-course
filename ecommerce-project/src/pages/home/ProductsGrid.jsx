@@ -1,60 +1,14 @@
-import formatMoney from '../../utils/money'
+import Product from "./Product";
 
-function ProductsGrid({products}) {
+// products and loadCart props are received here from the HomePage.jsx
+function ProductsGrid({ products, loadCart }) {
   return (
+    // we got a problem the when we change quantity from the drop down menu for one product, each and every product's quantity is changed. This happens because useState() is outside the products.map() function and it(useState) shared state between all the products. So the solution is to bring "const [quantity, setQuantity] = useState(1);" inside the products.map(). But, it is against rules of react hooks.State should be at the top level of the component. Then we created a another component called Product.jsx and we put products details inside it. Then we gave the state => "const [quantity, setQuantity] = useState(1);" to Product.jsx. It solves the problem of react hook rules. Now each and every product has its own seperate state.
     <div className="products-grid">
       {products.map((product) => {
         return (
-          <div key={product.id} className="product-container">
-            <div className="product-image-container">
-              <img className="product-image" src={product.image} />
-            </div>
-
-            <div className="product-name limit-text-to-2-lines">
-              {product.name}
-            </div>
-
-            <div className="product-rating-container">
-              <img
-                className="product-rating-stars"
-                src={`images/ratings/rating-${product.rating.stars * 10}.png`}
-              />
-              <div className="product-rating-count link-primary">
-                {product.rating.count}
-              </div>
-            </div>
-
-            <div className="product-price">
-              {formatMoney(product.priceCents)}
-            </div>
-
-            <div className="product-quantity-container">
-              <select>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-              </select>
-            </div>
-
-            <div className="product-spacer"></div>
-
-            <div className="added-to-cart">
-              <img src="images/icons/checkmark.png" />
-              Added
-            </div>
-
-            <button className="add-to-cart-button button-primary">
-              Add to Cart
-            </button>
-          </div>
-        );
+          <Product key={product.id} product={product} loadCart={loadCart}/>
+        )
       })}
     </div>
   );

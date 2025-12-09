@@ -1,5 +1,6 @@
 import formatMoney from "../../utils/money";
 
+//prop paymentSummary comes from CheckoutPage.jsx
 function PaymentSummary({ paymentSummary }) {
   return (
     <div className="payment-summary">

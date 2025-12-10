@@ -81,4 +81,5 @@ describe("Product Component", () => {
 
     expect(loadCart).toHaveBeenCalled();
   });
+
 });

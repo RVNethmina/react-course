@@ -1,7 +1,18 @@
 import { Link } from "react-router";
 import "./header.css";
 
-function Header({cart}) {
+//This is called Type Alias = works like a variable, but for types.
+type HeaderProps = {
+  cart: {
+    productId: string;
+    quantity: number;
+    deliveryOptionId: string
+  } [];
+};
+
+//we tell TS the {cart} is an object with property called cart and the cart is an array and each value of an array has productId, quantity, deliveryOptionId as properties.
+// { cart } is the parameter/prop not cart.
+function Header( { cart }: HeaderProps ) {
 
   let totalQuantity = 0;
 

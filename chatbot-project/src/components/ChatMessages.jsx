@@ -2,6 +2,7 @@ import { useEffect , useRef } from "react";
 import { ChatMessage } from "./ChatMessage";
 import './ChatMessages.css';
 
+// chatMessages prop come from App.jsx
 function ChatMessages({ chatMessages }) {
 
   /*  
@@ -50,6 +51,7 @@ function ChatMessages({ chatMessages }) {
           <ChatMessage 
             message={chatMessage.message}
             sender={chatMessage.sender}
+            time={(chatMessage.time)}
             key={chatMessage.id}
           />
         );

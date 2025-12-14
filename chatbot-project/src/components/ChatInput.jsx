@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useState } from "react";
 import { Chatbot } from 'supersimpledev';
 import './ChatInput.css'
@@ -18,7 +19,8 @@ export function ChatInput({ chatMessages,setChatMessages }) {
       {
         message: inputText,
         sender: 'user',
-        id: crypto.randomUUID()
+        id: crypto.randomUUID(),
+        time: dayjs().valueOf()
       }
     ];
     setChatMessages(newChatMessages);
@@ -30,11 +32,24 @@ export function ChatInput({ chatMessages,setChatMessages }) {
       {
         message: response,
         sender: 'robot',
-        id: crypto.randomUUID()
+        id: crypto.randomUUID(),
+        time:dayjs().valueOf()
       }
     ]);
 
     setInputText('');
+  }
+
+  //Remove chatMessages array from localstorage.
+  function clearChatMessages() {
+    setChatMessages([]);
+
+    // Here, you could also run:
+    // localStorage.setItem('messages', JSON.stringify([]));
+
+    // However, because chatMessages is being updated, the
+    // useEffect in the App component will run, and it will
+    // automatically update messages in localStorage to be [].
   }
 
   return (
@@ -51,6 +66,11 @@ export function ChatInput({ chatMessages,setChatMessages }) {
           onClick={sendMessage}
           className="send-button"
         >Send</button>
+
+        <button
+          onClick={clearChatMessages}
+          className='clear-button'
+        >Clear</button>
       </div>
   )
 }

@@ -39,6 +39,11 @@
         display: flex;
         flex-direction: column;
       }
+
+      .welcome-message{
+        color: rgb(120, 120, 120);
+        text-align: center;
+      }
       .chat-message-user{
         display: flex;
         justify-content: end;
@@ -70,6 +75,10 @@
         scrollbar-width: none;
         
       }
+      .loading-spinner-image{
+        height: 40px;
+        margin: -15px;
+      }
     </style>
   </head>
   <body>
@@ -81,30 +90,64 @@
     <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
 
     <script type="text/babel">
-      //component 1
+      // ==========================================
+      // COMPONENT 1: ChatInput
+      // Responsibility: Handle user typing and the "Send" button.
+      // ==========================================
       function ChatInput({ chatMessages,setChatMessages }) { 
-
+ 
+        // We need a "state" variable (inputText) to track exactly what the user is typing 
+        // in real-time. If we don't use state, React won't know the input changed.
         const [inputText, setInputText] = React.useState('');
 
+        const [isLoading, setIsLoading] = React.useState(false);
+
+        // This function runs every time you press a key in the input box.
         function saveInputText(event) {
           setInputText(event.target.value);
         }
+        
+        // The logic for what happens when you click "Send".
+        async function sendMessage(){
 
-        function sendMessage(){
+          if(isLoading || inputText === '') {
+            return;
+          }
 
-          // using spread operator we made a copy of chatMessages array, and then we added a value at end of the new array.
+          // Set isLoading to true at the start, and set it to
+          // false after everything is done.
+          setIsLoading(true);
+
+          // The Spread Operator (...)
+          // In React, we never change state directly (like chatMessages.push).
+          // Instead, we create a brand new array.
+          // [...chatMessages] means: "Copy all existing items from the old array."
+          // Then we add our new message object at the end.
           const newChatMessages = [
             ...chatMessages, 
             {
               message: inputText,
               sender: 'user',
-              id: crypto.randomUUID()
+              id: crypto.randomUUID()// We need a unique ID for React to track this item.
             }
           ];
-          setChatMessages(newChatMessages);
+          setChatMessages([
+            ...newChatMessages,
+            // This creates a temporary Loading... message. Time for loading message is async function time.
+            // Because we don't save this message in newChatMessages,
+            // it will be remove later, when we add the response.
+            {
+              message: <img className="loading-spinner-image" src="loading-spinner.gif"/>,
+              sender: 'robot',
+              id: crypto.randomUUID()
+            }
+          ]);
 
-          const response = Chatbot.getResponse(inputText);
+          // Get the robot's response (simulated).
+          const response = await Chatbot.getResponseAsync(inputText);
           
+          // Update the state AGAIN to add the robot's message.
+          // Note: We use 'newChatMessages' here because it includes the user's latest message.
           setChatMessages([
             ...newChatMessages, 
             {
@@ -113,8 +156,19 @@
               id: crypto.randomUUID()
             }
           ]);
-
+          
+          // Clear the text box so the user can type again.
           setInputText('');
+          setIsLoading(false);
+        }
+        
+        function handleKeyDown(event) {
+          if(event.key === 'Enter'){
+            sendMessage();
+          }
+          else if(event.key === 'Escape'){
+            setInputText('');
+          }
         }
 
         return (
@@ -122,9 +176,11 @@
               <input 
                 placeholder="Send a message to Chatbox" 
                 size="30"
+                // Connects the typing action to our function above
                 onChange={saveInputText}
-                //value = change the text inside this <Input>
+                // Controlled Input: The text inside is forced to match our state variable.
                 value={inputText}
+                onKeyDown={handleKeyDown}
                 className="chat-input"
               /> 
               <button
@@ -135,7 +191,10 @@
         )
       }
 
-      //component 2
+      // ==========================================
+      // COMPONENT 2: ChatMessage
+      // Responsibility: Render a SINGLE bubble (either left or right side).
+      // ==========================================
       function ChatMessage({ message, sender }) {
         // const message = props.message;
         // const sender = props.sender;
@@ -151,14 +210,23 @@
         //   );
         // }
 
+        // Conditional Styling
+        // We check: Is the sender a 'user'? 
+        // If YES (?), use class 'chat-message-user' (align right).
+        // If NO (:), use class 'chat-message-robot' (align left).
         return (
           <div className={sender === 'user' ? 'chat-message-user': 'chat-message-robot'}>
+            {/* TEACHER NOTE: Logical AND (&&) 
+               This is a shortcut. It says: "If sender is 'robot', THEN render the image."
+               If sender is NOT robot, React ignores this line.
+            */}
             {sender === 'robot' && (
               <img src="robot.png" alt="user-image" className="chat-message-profile"/>
             )}
             <div className="chat-message-text">
               {message}
             </div>
+            {/* Same logic here: If sender is user, show the user icon */}
             {sender === 'user' && (
               <img src="user.png" alt="user-image" className="chat-message-profile"/>
             )}
@@ -166,7 +234,10 @@
         );
       }
 
-      //Component 3
+      // ==========================================
+      // COMPONENT 3: ChatMessages
+      // Responsibility: Loop through the list and handle Auto-Scrolling.
+      // ==========================================
       function ChatMessages({ chatMessages }) {
 
         /*  
@@ -193,23 +264,37 @@
             
           }
         */
-        //useRef = automatically save an HTML element from the component.
-        //null - initial value
+        
+        // useRef
+        // Think of 'useRef' as a hook used to grab an HTML element from the screen.
+        // We start with 'null' because the HTML hasn't been drawn yet.
         const chatMessagesRef = React.useRef(null);
-        //react will run this function, after component is created and every time the component is updated.
-        //Array at the end controls when useEffect runs.
-        //empty array = [] -> only run once, after the component is created. This is called depenency array
-        //In here [chatMessages] = run this function every time chatMessages changes.
+
+        // useEffect
+        // React renders the HTML first. AFTER the HTML is on screen, useEffect runs.
+        // We need this because we can't scroll a window that doesn't exist yet.
         React.useEffect(() => {
+          // Access the actual HTML div using .current
           const containerElem = chatMessagesRef.current;
           if(containerElem){
+            // Set the scroll position (scrollTop) to the total height (scrollHeight).
+            // Effectively: "Jump to bottom."
             containerElem.scrollTop = containerElem.scrollHeight;
           }
+        // The Dependency Array [chatMessages]:
+        // This tells React: "Only run this scroll logic if the 'chatMessages' array changed."
         }, [chatMessages]);
 
         return (
-          /*what happens in here is chat-messages-container is given to the ref container of useRef and save it in chatMessagesRef variable. useEffect access it and changes the chat-messages-container to handle auto scroll feature*/
+          /* ref={chatMessagesRef} connects this specific <div> 
+             to our variable above so we can control its scrollbar.
+          */
           <div className="chat-messages-container" ref={chatMessagesRef}>
+
+            {/* TEACHER NOTE: Mapping
+               We take the array of data and convert (map) it into an array of HTML components.
+               React requires a unique 'key' for every item in a list for performance.
+            */}
             {chatMessages.map((chatMessage) => {
               return (
                 <ChatMessage 
@@ -224,30 +309,22 @@
 
       }
 
-      //component 4
+      // ==========================================
+      // COMPONENT 4: App
+      // Responsibility: The "Brain". Holds the data and puts components together.
+      // ==========================================
       function App() {
+
+        // TEACHER NOTE: The Source of Truth
+        // This state lives at the top level (App). 
+        // We pass the data DOWN to children (ChatMessages) via props.
+        // We pass the function to update data DOWN to children (ChatInput) via props.
 
         // in here React.useState() converts whole data into a state. UseState gives us 2 values. 
         // 1) current data.
         // 2) function to update the data(updater function)
         
-        const [ chatMessages, setChatMessages ] = React.useState([{
-          message: 'Hello Chatbot',
-          sender: 'user',
-          id: 'id1'
-        }, {
-          message: 'Hello! How can I help You!',
-          sender: 'robot',
-          id: 'id12'
-        }, {
-          message: 'Can you get me todays date?',
-          sender: 'user',
-          id: 'id3'
-        }, {
-          message: 'Today is September 27',
-          sender: 'robot',
-          id: 'id4'
-        }]);
+        const [ chatMessages, setChatMessages ] = React.useState([]);
         
         //this is called array destructuring, 
         //const [ chatMessages, setChatMessages ] = array;
@@ -257,10 +334,17 @@
 
         return(
           <div className="app-container">
+            {chatMessages.length === 0 && (
+                <p className="welcome-message">Welcome to the chatbot project! Send a message using the text below.</p>
+              )
+            }
+            
+            {/* Pass the data down so this component can display it */}
             <ChatMessages
               chatMessages={chatMessages}
             />
 
+            {/* Pass the data AND the updater function down so this component can add new messages */}
             <ChatInput
               chatMessages={chatMessages}
               setChatMessages={setChatMessages}

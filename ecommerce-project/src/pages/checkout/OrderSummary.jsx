@@ -9,8 +9,6 @@ function OrderSummary({ deliveryOptions, cart , loadCart }) {
       {/* cart is the prop that we aceessed from App.jsx */}
       {deliveryOptions.length > 0 &&
         cart.map((cartItem) => {
-          
-
           return (
             <div key={cartItem.productId} className="cart-item-container">
               

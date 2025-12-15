@@ -19,7 +19,6 @@ function HomePage({ cart, loadCart }) {
       const response = await axios.get("/api/products");
       setProducts(response.data);
     };
-
     getHomeData();
   }, []);
 

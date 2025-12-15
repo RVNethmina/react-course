@@ -8,6 +8,8 @@ import NotFoundPage from './pages/notfound/NotFoundPage.jsx'
 import { Routes, Route } from "react-router";
 import "./App.css";
 
+
+
 function App() {
   //This is called lifting the state up. We do this to share the cart data between all the pages.
   const [cart, setCart] = useState([]);
@@ -27,7 +29,7 @@ function App() {
       {/* <Route path="/" element={<HomePage/>}></Route> */}
       <Route index element={<HomePage cart={cart} loadCart={loadCart}/>} />
       <Route path="checkout" element={<CheckoutPage cart={cart} loadCart={loadCart} />} />
-      <Route path="orders" element={<OrdersPage cart={cart} />} />
+      <Route path="orders" element={<OrdersPage cart={cart} loadCart={loadCart}/>} />
       <Route path="tracking/:orderId/:productId" element={<TrackingPage cart={cart} />} />
       <Route path="*" element={<NotFoundPage cart={cart}/> } />
     </Routes>

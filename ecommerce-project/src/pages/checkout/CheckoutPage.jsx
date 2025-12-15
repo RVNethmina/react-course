@@ -10,19 +10,22 @@ function CheckoutPage({ cart, loadCart }) {
   const [paymentSummary, setPaymentSummary] = useState(null);
 
   useEffect(() => {
-    // we use let response => because we might need to use response variable again because there are 2 functions in here.
-    const fetchCheckoutData = async () => {
-      let response = await axios.get(
+    const fetchDeliveryData = async () => {
+      const response = await axios.get(
         "/api/delivery-options?expand=estimatedDeliveryTime"
       );
       setDeliveryOptions(response.data);
-
-      response = await axios.get("/api/payment-summary");
-      setPaymentSummary(response.data);
     };
+    fetchDeliveryData();
+  }, []);
 
-    fetchCheckoutData();
-  }, [cart]);
+  useEffect( () => {
+    const fetchPaymentSummary = async () => {
+      const response = await axios.get("/api/payment-summary");
+      setPaymentSummary(response.data);
+    }
+    fetchPaymentSummary();
+  }, [cart])
 
   return (
     <>

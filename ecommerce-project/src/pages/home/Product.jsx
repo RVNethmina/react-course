@@ -4,6 +4,7 @@ import formatMoney from "../../utils/money";
 
 function Product({ product, loadCart }) {
   const [quantity, setQuantity] = useState(1);
+  const [ showAddMessage , setShowAddMessage ] = useState(false);
 
   //loadCart function and axios.get() functions both are asynchronous functions. So we wait them to be finished by putting await in front of the function.
   const addToCart = async () => {
@@ -12,6 +13,14 @@ function Product({ product, loadCart }) {
       quantity,
     });
     await loadCart();
+
+    //when product is added to cart we track it
+    setShowAddMessage(true);
+
+    // after 2 seconds we unshow added to cart message
+    setTimeout(() => {
+      setShowAddMessage(false);
+    }, 2000);
   };
 
   const selectQuantity = (event) => {
@@ -66,7 +75,9 @@ function Product({ product, loadCart }) {
 
       <div className="product-spacer"></div>
 
-      <div className="added-to-cart">
+      <div className="added-to-cart" style={{
+        opacity: showAddMessage ? 1 : 0,
+      }}>
         <img src="images/icons/checkmark.png" />
         Added
       </div>

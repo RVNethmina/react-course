@@ -27,7 +27,7 @@ function CheckoutPage({ cart, loadCart }) {
   return (
     <>
       <title>Checkout</title>
-      
+      <link rel="icon" type="image/svg+xml" href="../../../public/favicon/cart-favicon.png" />
       <CheckoutHeader cart={cart}/>
 
       <div className="checkout-page">

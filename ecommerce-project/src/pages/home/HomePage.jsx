@@ -26,6 +26,7 @@ function HomePage({ cart, loadCart }) {
   //when the dependancy array is empty the code will only run once.
   return (
     <>
+      <link rel="icon" type="image/svg+xml" href="/favicon/home-favicon.png" />
       <title>HomePage</title>
       <Header cart={cart} />
       <div className="home-page">
